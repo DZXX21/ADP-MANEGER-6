@@ -97,6 +97,186 @@ class DatabaseManager:
                 connection.close()
             return {'total_accounts': 0, 'unique_domains': 0, 'last_updated': 'Bilinmiyor'}
     
+    # YENİ LEAK LOGS FONKSİYONLARI
+    def get_leak_logs(self, page=1, limit=20, source_filter='', type_filter='', channel_filter=''):
+        """Leak logs verilerini getir"""
+        connection = self.get_connection()
+        if not connection:
+            return {'results': [], 'total': 0, 'error': 'Veritabanı bağlantısı başarısız'}
+        
+        try:
+            cursor = connection.cursor(dictionary=True)
+            
+            # WHERE koşulları
+            where_conditions = []
+            params = []
+            
+            if source_filter:
+                where_conditions.append("source LIKE %s")
+                params.append(f"%{source_filter}%")
+            if type_filter:
+                where_conditions.append("type = %s")
+                params.append(type_filter)
+            if channel_filter:
+                where_conditions.append("channel LIKE %s")
+                params.append(f"%{channel_filter}%")
+            
+            where_clause = "WHERE " + " AND ".join(where_conditions) if where_conditions else ""
+            
+            # Toplam sayı
+            count_query = f"SELECT COUNT(*) as total FROM leak_logs {where_clause}"
+            cursor.execute(count_query, params)
+            total_count = cursor.fetchone()['total']
+            
+            # Sayfalama
+            total_pages = (total_count + limit - 1) // limit
+            offset = (page - 1) * limit
+            
+            # Ana sorgu
+            query = f"""
+                SELECT id, channel, source, content, author, detection_date, type, created_at
+                FROM leak_logs 
+                {where_clause}
+                ORDER BY created_at DESC
+                LIMIT %s OFFSET %s
+            """
+            params.extend([limit, offset])
+            
+            cursor.execute(query, params)
+            results = cursor.fetchall()
+            
+            cursor.close()
+            connection.close()
+            
+            return {
+                'results': results,
+                'total': total_count,
+                'pages': total_pages,
+                'page': page
+            }
+            
+        except Error as e:
+            logging.error(f"Leak logs hatası: {e}")
+            if connection:
+                connection.close()
+            return {'results': [], 'total': 0, 'error': str(e)}
+    
+    def get_leak_logs_stats(self):
+        """Leak logs istatistikleri"""
+        connection = self.get_connection()
+        if not connection:
+            return {'total_logs': 0, 'sources': [], 'types': [], 'channels': []}
+        
+        try:
+            cursor = connection.cursor(dictionary=True)
+            
+            # Toplam log sayısı
+            cursor.execute("SELECT COUNT(*) as total FROM leak_logs")
+            total_logs = cursor.fetchone()['total']
+            
+            # Source'lara göre dağılım
+            cursor.execute("""
+                SELECT source, COUNT(*) as count 
+                FROM leak_logs 
+                GROUP BY source 
+                ORDER BY count DESC 
+                LIMIT 10
+            """)
+            sources = cursor.fetchall()
+            
+            # Type'lara göre dağılım
+            cursor.execute("""
+                SELECT type, COUNT(*) as count 
+                FROM leak_logs 
+                GROUP BY type 
+                ORDER BY count DESC
+            """)
+            types = cursor.fetchall()
+            
+            # Channel'lara göre dağılım
+            cursor.execute("""
+                SELECT channel, COUNT(*) as count 
+                FROM leak_logs 
+                GROUP BY channel 
+                ORDER BY count DESC 
+                LIMIT 10
+            """)
+            channels = cursor.fetchall()
+            
+            cursor.close()
+            connection.close()
+            
+            return {
+                'total_logs': total_logs,
+                'sources': sources,
+                'types': types,
+                'channels': channels
+            }
+            
+        except Error as e:
+            logging.error(f"Leak logs istatistik hatası: {e}")
+            if connection:
+                connection.close()
+            return {'total_logs': 0, 'sources': [], 'types': [], 'channels': []}
+    
+    def search_leak_logs(self, query, page=1, limit=20):
+        """Leak logs'da arama"""
+        connection = self.get_connection()
+        if not connection:
+            return {'results': [], 'total': 0, 'error': 'Veritabanı bağlantısı başarısız'}
+        
+        try:
+            cursor = connection.cursor(dictionary=True)
+            
+            # Arama koşulları
+            search_pattern = f"%{query}%"
+            where_clause = """
+                WHERE content LIKE %s 
+                OR author LIKE %s 
+                OR source LIKE %s 
+                OR channel LIKE %s
+            """
+            params = [search_pattern, search_pattern, search_pattern, search_pattern]
+            
+            # Toplam sayı
+            count_query = f"SELECT COUNT(*) as total FROM leak_logs {where_clause}"
+            cursor.execute(count_query, params)
+            total_count = cursor.fetchone()['total']
+            
+            # Sayfalama
+            total_pages = (total_count + limit - 1) // limit
+            offset = (page - 1) * limit
+            
+            # Ana sorgu
+            search_query = f"""
+                SELECT id, channel, source, content, author, detection_date, type, created_at
+                FROM leak_logs 
+                {where_clause}
+                ORDER BY created_at DESC
+                LIMIT %s OFFSET %s
+            """
+            params.extend([limit, offset])
+            
+            cursor.execute(search_query, params)
+            results = cursor.fetchall()
+            
+            cursor.close()
+            connection.close()
+            
+            return {
+                'results': results,
+                'total': total_count,
+                'pages': total_pages,
+                'page': page
+            }
+            
+        except Error as e:
+            logging.error(f"Leak logs arama hatası: {e}")
+            if connection:
+                connection.close()
+            return {'results': [], 'total': 0, 'error': str(e)}
+    
+    # ESKI FONKSİYONLAR
     def search_accounts(self, query, page=1, limit=20, domain_filter='', region_filter='', source_filter=''):
         """Hesaplarda arama yap"""
         connection = self.get_connection()

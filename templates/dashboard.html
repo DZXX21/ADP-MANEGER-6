@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberThreat Intelligence Dashboard</title>
+    <title>Leak Logs Intelligence Dashboard</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
@@ -22,7 +22,7 @@
         }
 
         .card-header {
-            background-color: #007bff;
+            background-color: #dc3545;
             color: white;
         }
 
@@ -34,7 +34,7 @@
             text-align: center;
             padding: 20px;
             border-radius: 8px;
-            background-color: #007bff;
+            background-color: #dc3545;
             color: white;
         }
 
@@ -56,35 +56,35 @@
 <body>
 
     <div class="container">
-        <h1 class="text-center my-5">CyberThreat Intelligence Dashboard</h1>
+        <h1 class="text-center my-5">🚨 Leak Logs Intelligence Dashboard</h1>
 
         <div class="row">
             <div class="col-md-3">
                 <div class="stat-card">
-                    <i class="fas fa-cogs"></i>
+                    <i class="fas fa-exclamation-triangle"></i>
                     <h3>{{ total_assets }}</h3>
-                    <p>Total Assets</p>
+                    <p>Total Logs</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
-                    <i class="fas fa-domain"></i>
+                    <i class="fas fa-source"></i>
                     <h3>{{ unique_domains }}</h3>
-                    <p>Unique Domains</p>
+                    <p>Unique Sources</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
-                    <i class="fas fa-th-large"></i>
+                    <i class="fas fa-tags"></i>
                     <h3>{{ categories_count }}</h3>
-                    <p>Categories Count</p>
+                    <p>Log Types</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
-                    <i class="fas fa-map-marker-alt"></i>
+                    <i class="fas fa-broadcast-tower"></i>
                     <h3>{{ regions_count }}</h3>
-                    <p>Regions Count</p>
+                    <p>Channels</p>
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@
         <!-- Category Distribution Chart -->
         <div class="card">
             <div class="card-header">
-                <h5>Category Distribution</h5>
+                <h5>Source Distribution</h5>
             </div>
             <div class="card-body">
                 <canvas id="categoryChart"></canvas>
@@ -102,7 +102,7 @@
         <!-- Regional Distribution Chart -->
         <div class="card mt-4">
             <div class="card-header">
-                <h5>Regional Distribution</h5>
+                <h5>Channel Distribution</h5>
             </div>
             <div class="card-body">
                 <canvas id="regionalChart"></canvas>
@@ -112,16 +112,16 @@
         <!-- Recent Data -->
         <div class="card mt-4">
             <div class="card-header">
-                <h5>Recent Data</h5>
+                <h5>Recent Logs</h5>
             </div>
             <div class="card-body">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Domain</th>
-                            <th>Category</th>
-                            <th>Region</th>
-                            <th>Fetch Date</th>
+                            <th>Channel</th>
+                            <th>Type</th>
+                            <th>Source</th>
+                            <th>Detection Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -147,10 +147,10 @@
             data: {
                 labels: {{ category_stats | tojson | safe }},
                 datasets: [{
-                    label: 'Category Count',
+                    label: 'Source Count',
                     data: {{ category_stats | tojson | safe }},
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(220, 53, 69, 0.2)',
+                    borderColor: 'rgba(220, 53, 69, 1)',
                     borderWidth: 1
                 }]
             },
@@ -170,7 +170,7 @@
             data: {
                 labels: {{ regional_data | tojson | safe }},
                 datasets: [{
-                    label: 'Regions Distribution',
+                    label: 'Channel Distribution',
                     data: {{ regional_data | tojson | safe }},
                     backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF5733', '#8E44AD'],
                     hoverOffset: 4
