@@ -813,44 +813,69 @@
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+      <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h1>
                 <i data-lucide="shield-check"></i>
                 Lapsus
             </h1>
-            <p>Güvenlik Yönetim Sistemi</p>
+            <p>Dijital Varlık Yönetim Platformu</p>
         </div>
-        
+                 
         <nav class="sidebar-nav">
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="switchPage('dashboard')">
+                <a href="#" id="dashboardLink" class="nav-link active" onclick="switchPage('dashboard')">
                     <i data-lucide="layout-dashboard"></i>
                     Kontrol Paneli
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="switchPage('analytics')">
-                    <i data-lucide="bar-chart-3"></i>
-                    Analitik
+                <a href="/search" id="searchLink" class="nav-link" onclick="switchPage('search')">
+                    <i data-lucide="search"></i>
+                    Arama
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="switchPage('accounts')">
-                    <i data-lucide="users"></i>
-                    Hesaplar
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="#" class="nav-link active" onclick="switchPage('leak-logs')">
+                <a href="/leak-logs" class="nav-link" onclick="switchPage('leak-logs')">
                     <i data-lucide="shield-alert"></i>
-                    Leak Logs
+                    Leak Logs Search
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="switchPage('reports')">
-                    <i data-lucide="file-text"></i>
-                    Raporlar
+                <a href="#" class="nav-link" onclick="toggleSubmenu(event, 'cve-submenu')">
+                    <i data-lucide="alert-triangle"></i>
+                    CVE Alert
+                </a>
+                <div id="cve-submenu" style="display: none; padding-left: 2.5rem;">
+                    <a href="#" class="nav-link" onclick="switchPage('cve-search')">CVE Search</a>
+                    <a href="#" class="nav-link" onclick="switchPage('cve-new')">CVE New</a>
+                    <a href="#" class="nav-link" onclick="switchPage('cve-summary')">CVE Summary</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="toggleSubmenu(event, 'ip-submenu')">
+                    <i data-lucide="network"></i>
+                    IP Search
+                </a>
+                <div id="ip-submenu" style="display: none; padding-left: 2.5rem;">
+                    <a href="#" class="nav-link" onclick="switchPage('ip-search')">IP Search</a>
+                    <a href="#" class="nav-link" onclick="switchPage('blacklist-ip')">Black List IP</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="toggleSubmenu(event, 'pentest-submenu')">
+                    <i data-lucide="bug"></i>
+                    Web Pentest
+                </a>
+                <div id="pentest-submenu" style="display: none; padding-left: 2.5rem;">
+                    <a href="#" class="nav-link" onclick="switchPage('web-pentest')">Web Pentest</a>
+                    <a href="#" class="nav-link" onclick="switchPage('wordpress-pentest')">WordPress Pentest</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="switchPage('domain-search')">
+                    <i data-lucide="globe"></i>
+                    Domain Search
                 </a>
             </div>
             <div class="nav-item">

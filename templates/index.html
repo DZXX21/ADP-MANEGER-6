@@ -663,25 +663,46 @@
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="switchPage('accounts')">
-                    <i data-lucide="users"></i>
-                    Dijital Varlıklar
-                </a>
-            </div>
-            <!-- YENİ EKLENEN: Leak Intelligence - Telegram Icon -->
-            <div class="nav-item">
-                <a href="/leak-logs" class="nav-link" onclick="switchPage('leak-intelligence')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 12px;">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.91 1.21-5.41 3.56-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.47-.81-.26-1.46-.4-1.4-.85.03-.23.38-.47 1.05-.72 4.1-1.79 6.84-2.97 8.23-3.54 3.92-1.65 4.73-1.94 5.26-1.94.12 0 .38.03.55.18.14.12.18.28.2.4-.01.06.01.24-.01.37z"/>
-                    </svg>
-                    Leak Intelligence
-                    <span class="nav-badge">🔥</span>
+                <a href="/leak-logs" class="nav-link" onclick="switchPage('leak-logs')">
+                    <i data-lucide="shield-alert"></i>
+                    Leak Logs Search
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="switchPage('reports')">
-                    <i data-lucide="file-text"></i>
-                    Raporlar
+                <a href="#" class="nav-link" onclick="toggleSubmenu(event, 'cve-submenu')">
+                    <i data-lucide="alert-triangle"></i>
+                    CVE Alert
+                </a>
+                <div id="cve-submenu" style="display: none; padding-left: 2.5rem;">
+                    <a href="#" class="nav-link" onclick="switchPage('cve-search')">CVE Search</a>
+                    <a href="#" class="nav-link" onclick="switchPage('cve-new')">CVE New</a>
+                    <a href="#" class="nav-link" onclick="switchPage('cve-summary')">CVE Summary</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="toggleSubmenu(event, 'ip-submenu')">
+                    <i data-lucide="network"></i>
+                    IP Search
+                </a>
+                <div id="ip-submenu" style="display: none; padding-left: 2.5rem;">
+                    <a href="#" class="nav-link" onclick="switchPage('ip-search')">IP Search</a>
+                    <a href="#" class="nav-link" onclick="switchPage('blacklist-ip')">Black List IP</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="toggleSubmenu(event, 'pentest-submenu')">
+                    <i data-lucide="bug"></i>
+                    Web Pentest
+                </a>
+                <div id="pentest-submenu" style="display: none; padding-left: 2.5rem;">
+                    <a href="#" class="nav-link" onclick="switchPage('web-pentest')">Web Pentest</a>
+                    <a href="#" class="nav-link" onclick="switchPage('wordpress-pentest')">WordPress Pentest</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="switchPage('domain-search')">
+                    <i data-lucide="globe"></i>
+                    Domain Search
                 </a>
             </div>
             <div class="nav-item">
@@ -711,7 +732,7 @@
                 <div class="user-info">
                     <span>
                         <i data-lucide="user"></i>
-                        {{ user_name or 'Kullanıcı' }}
+                        Kullanıcı
                     </span>
                     <a href="/logout">
                         <i data-lucide="log-out"></i>
@@ -734,10 +755,6 @@
             </div>
 
             <!-- Error/Loading Messages -->
-            {% if error %}
-                <div class="error-message">{{ error }}</div>
-            {% endif %}
-            
             <div id="errorMessage" class="error-message" style="display: none;"></div>
             <div id="loadingMessage" class="loading-message">📊 Dijital varlık verileri analiz ediliyor...</div>
             <div id="noDataMessage" class="no-data-message" style="display: none;">
@@ -780,9 +797,16 @@
 
         // Global variables
         let data = { 
-            categories: {{ chart_data | tojson | safe }} || []
+            categories: [
+                { label: 'Kurumsal Hesaplar', count: 1245, percentage: '35.2', color: '#1e90ff', icon: 'building' },
+                { label: 'Sosyal Medya', count: 892, percentage: '25.2', color: '#87ceeb', icon: 'globe' },
+                { label: 'Eğitim Platformları', count: 567, percentage: '16.0', color: '#4682b4', icon: 'graduation-cap' },
+                { label: 'E-ticaret', count: 423, percentage: '12.0', color: '#6495ed', icon: 'star' },
+                { label: 'Finansal Hizmetler', count: 312, percentage: '8.8', color: '#00bfff', icon: 'landmark' },
+                { label: 'Diğer', count: 98, percentage: '2.8', color: '#5f9ea0', icon: 'folder' }
+            ]
         };
-        let totalCount = {{ stats.total_accounts or 0 }};
+        let totalCount = 3537;
         let summaryChart, detailedChart;
         let miniCharts = [];
 
@@ -807,6 +831,11 @@
                 showMessage('loading', '📊 Dijital varlık verileri analiz ediliyor...');
                 
                 const response = await fetch('/api/stats');
+                
+                if (!response.ok) {
+                    throw new Error('API yanıt hatası: ' + response.status);
+                }
+                
                 const apiData = await response.json();
                 
                 if (apiData.success && apiData.categories && apiData.categories.length > 0) {
@@ -829,6 +858,16 @@
                 showMessage('error', '❌ Veritabanı bağlantı hatası: ' + error.message);
                 updateStatus('Bağlantı Hatası', false);
                 hideStatsAndCharts();
+                
+                // Demo verilerle devam et
+                updateDashboard({
+                    categories: data.categories,
+                    total_accounts: totalCount,
+                    unique_domains: 245,
+                    last_updated: new Date().toLocaleString('tr-TR')
+                });
+                updateStatus('Demo Modu', true);
+                hideMessages();
             }
         }
 
@@ -1104,35 +1143,40 @@
             fetchRealData();
         }
 
+        function toggleSubmenu(event, submenuId) {
+            event.preventDefault();
+            const submenu = document.getElementById(submenuId);
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function toggleCveSubmenu(event) {
+            toggleSubmenu(event, 'cve-submenu');
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            {% if chart_data and chart_data|length > 0 %}
-                hideMessages();
-                showStatsAndCharts();
-                updateStatus('Sistem Operasyonel', true);
-                updateDashboardWithFlaskData();
-                console.log('✅ Flask\'tan dijital varlık verileri yüklendi');
-            {% else %}
-                fetchRealData();
-            {% endif %}
+            // Demo verilerle başlat
+            updateDashboard({
+                categories: data.categories,
+                total_accounts: totalCount,
+                unique_domains: 245,
+                last_updated: new Date().toLocaleString('tr-TR')
+            });
+            updateStatus('Demo Modu', true);
+            hideMessages();
             
+            // Gerçek verileri al
+            fetchRealData();
+            
+            // Otomatik yenileme
             setInterval(autoRefresh, 30000);
             
+            // Animasyon gecikmesi
             setTimeout(() => {
                 document.querySelectorAll('.fade-in').forEach((el, index) => {
                     el.style.animationDelay = (index * 0.1) + 's';
                 });
             }, 100);
         });
-
-        function updateDashboardWithFlaskData() {
-            if (data.categories && data.categories.length > 0) {
-                document.getElementById('lastUpdated').textContent = 
-                    `Son güncelleme: {{ stats.last_updated }} | Toplam: {{ stats.total_accounts }} dijital varlık | Benzersiz domain: {{ stats.unique_domains }}`;
-                
-                createStatCards();
-                updateCharts();
-            }
-        }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -1155,8 +1199,15 @@
             const pageNames = {
                 'dashboard': 'Dijital Varlık Analizi',
                 'search': 'Arama',
-                'accounts': 'Dijital Varlık Envanteri',
-                'reports': 'Kurumsal Raporlar',
+                'leak-logs': 'Leak Logs Search',
+                'cve-search': 'CVE Search',
+                'cve-new': 'CVE New',
+                'cve-summary': 'CVE Summary',
+                'ip-search': 'IP Search',
+                'blacklist-ip': 'Black List IP',
+                'web-pentest': 'Web Pentest',
+                'wordpress-pentest': 'WordPress Pentest',
+                'domain-search': 'Domain Search',
                 'settings': 'Sistem Ayarları'
             };
             if (breadcrumb) {
@@ -1168,15 +1219,10 @@
             }
         }
 
-        function manualRefresh() {
-            fetchRealData();
-        }
-
         // Error handling
         window.addEventListener('error', function(e) {
             console.error('Sistem hatası:', e.error);
-            showMessage('error', '❌ Beklenmeyen bir sistem hatası oluştu. Sayfa yenileniyor...');
-            setTimeout(() => location.reload(), 3000);
+            showMessage('error', '❌ Beklenmeyen bir sistem hatası oluştu.');
         });
 
         // Network status
@@ -1191,49 +1237,6 @@
             updateStatus('Bağlantı Kesintisi', false);
             showMessage('error', '❌ Ağ bağlantısı mevcut değil. Lütfen bağlantınızı kontrol ediniz.');
         });
-
-        // Performance monitoring
-        window.addEventListener('load', function() {
-            const loadTime = performance.now();
-            console.log(`📊 Sayfa yükleme süresi: ${Math.round(loadTime)}ms`);
-            
-            if (loadTime > 5000) {
-                console.warn('⚠️ Sayfa yükleme süresi normalden uzun');
-            }
-        });
-
-        // Data validation
-        function validateData(apiData) {
-            if (!apiData || typeof apiData !== 'object') {
-                throw new Error('Geçersiz veri formatı');
-            }
-            
-            if (!Array.isArray(apiData.categories)) {
-                throw new Error('Kategori verisi eksik veya geçersiz');
-            }
-            
-            apiData.categories.forEach((category, index) => {
-                if (!category.label || !category.count || !category.percentage) {
-                    throw new Error(`Kategori ${index + 1} verisi eksik`);
-                }
-            });
-            
-            return true;
-        }
-
-        // Enhanced error logging
-        function logError(error, context = '') {
-            const errorData = {
-                message: error.message,
-                stack: error.stack,
-                context: context,
-                timestamp: new Date().toISOString(),
-                userAgent: navigator.userAgent,
-                url: window.location.href
-            };
-            
-            console.error('🚨 Detaylı hata raporu:', errorData);
-        }
 
         // Window resize handler
         window.addEventListener('resize', function() {
