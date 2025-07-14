@@ -8,6 +8,8 @@ main_bp = Blueprint('main_bp', __name__)
 from auth import login_required
 from database import db
 from api_utils import formatter
+from routes.api2_search import search_domain_with_retry
+
 
 @main_bp.route('/')
 @login_required
@@ -314,6 +316,65 @@ def api_leak_logs_search():
             'success': False,
             'error': str(e)
         }), 500
+    
+
+@main_bp.route('/helix-d')
+@login_required
+def helix_d_page():
+    """Helix-D API2 Search sayfası"""
+    return render_template('helix-d.html', 
+                         user_name=session.get('user_name'),
+                         user_role=session.get('user_role'))
+
+@main_bp.route('/helix-d/search', methods=['POST'])
+@login_required
+def helix_d_search():
+    """Helix-D domain arama API"""
+    try:
+        data = request.get_json() or {}
+        domain = data.get('domain', '').strip()
+        start_date = data.get('start_date', '').strip()
+        end_date = data.get('end_date', '').strip()
+        
+        # Domain kontrolü
+        if not domain:
+            return jsonify({
+                "success": False,
+                "error": "Domain parametresi gerekli"
+            }), 400
+        
+        # API2 search çağır
+        logging.info(f"Helix-D arama başlatıldı: {domain}")
+        result = search_domain_with_retry(domain, start_date, end_date)
+        
+        # Hata kontrolü
+        if "error" in result:
+            logging.error(f"Helix-D arama hatası: {result['error']}")
+            return jsonify({
+                "success": False,
+                "error": result["error"],
+                "domain": domain
+            }), 500
+        
+        # Başarılı sonuç
+        logging.info(f"Helix-D arama başarılı: {domain}")
+        return jsonify({
+            "success": True,
+            "data": result,
+            "domain": domain,
+            "search_params": {
+                "start_date": start_date or "Belirtilmedi",
+                "end_date": end_date or "Belirtilmedi"
+            }
+        })
+        
+    except Exception as e:
+        logging.error(f"Helix-D search hatası: {e}")
+        return jsonify({
+            "success": False,
+            "error": f"Arama sırasında hata: {str(e)}"
+        }), 500
+
 
 @main_bp.route('/leak-logs/api/detail/<int:log_id>')
 @login_required
@@ -364,3 +425,4 @@ def api_leak_log_detail(log_id):
             'success': False,
             'error': str(e)
         }), 500
+    

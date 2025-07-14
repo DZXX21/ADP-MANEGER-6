@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lapsus - Dijital Varlık Arama Sistemi</title>
+    <title>HELIX NEBULA – Digital Footprint Search System</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
@@ -688,17 +688,18 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">
-                <i data-lucide="shield-check"></i>
-                Lapsus
-            </div>
+    <img src="{{ url_for('static', filename='assets/logo1.png') }}" alt="Lapsus Logo" style="height: 82px; vertical-align: middle; margin-right: 8px;">
+    HELİX NEBULA
+        </div>
+
             <nav class="nav-menu">
                 <a href="/" class="nav-link">
                     <i data-lucide="layout-dashboard"></i>
                     Kontrol Paneli
                 </a>
                 <a href="/search" class="nav-link active">
-                    <i data-lucide="search"></i>
-                    Arama
+                    <i data-lucide="radar"></i>
+                     Digital Footprint
                 </a>
                  <a href="/leak-logs" class="nav-link " onclick="switchPage('leak-logs')">
                     <i data-lucide="shield-alert"></i>

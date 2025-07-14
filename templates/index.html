@@ -642,12 +642,14 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h1>
-                <i data-lucide="shield-check"></i>
-                Lapsus
-            </h1>
-            <p>Dijital Varlık Yönetim Platformu</p>
-        </div>
+    <h1>
+<img src="{{ url_for('static', filename='assets/logo1.png') }}" alt="Lapsus Logo" style="height: 82px; vertical-align: middle; margin-right: 8px;">
+
+        Lapsus
+    </h1>
+            <p>Tehdit, görünmeden işler; akıl onu görünür kılar.</p>
+    </div>
+
                  
         <nav class="sidebar-nav">
             <div class="nav-item">
@@ -658,8 +660,14 @@
             </div>
             <div class="nav-item">
                 <a href="/search" id="searchLink" class="nav-link" onclick="switchPage('search')">
-                    <i data-lucide="search"></i>
-                    Arama
+                    <i data-lucide="radar"></i>
+                    Digital Footprint
+                </a>
+            </div>
+             <div class="nav-item">
+                <a href="/helix-d" id="searchLink" class="nav-link" onclick="switchPage('search')">
+                    <i data-lucide="shield-off"></i>
+                    Domain Information Leak
                 </a>
             </div>
             <div class="nav-item">
