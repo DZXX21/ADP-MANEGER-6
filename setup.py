@@ -42,7 +42,7 @@ def create_env_template():
 SECRET_KEY=your_secret_key_here_change_in_production
 FLASK_DEBUG=False
 FLASK_HOST=0.0.0.0
-FLASK_PORT=7071
+FLASK_PORT=7072
 
 # Veritabanı Ayarları
 DB_HOST=192.168.70.70
