@@ -38,7 +38,7 @@ class Config:
     # Flask çalıştırma ayarları
     FLASK_DEBUG = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
     FLASK_HOST = os.getenv('FLASK_HOST', '0.0.0.0')
-    FLASK_PORT = int(os.getenv('FLASK_PORT', 7071))
+    FLASK_PORT = int(os.getenv('FLASK_PORT', 7072))
 
 
 class CategoryConfig:
