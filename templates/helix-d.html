@@ -46,22 +46,7 @@
             overflow: hidden;
         }
 
-        .sidebar-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 10px,
-                rgba(30, 144, 255, 0.1) 10px,
-                rgba(30, 144, 255, 0.1) 20px
-            );
-            animation: helix-rotate 20s linear infinite;
-        }
+       
 
         @keyframes helix-rotate {
             0% { transform: rotate(0deg); }
@@ -847,36 +832,74 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h1>
-                <i data-lucide="dna"></i>
-                Helix-D
-            </h1>
+              <h1>
+<img src="{{ url_for('static', filename='assets/logo1.png') }}" alt="Lapsus Logo" style="height: 82px; vertical-align: middle; margin-right: 8px;">
+
+        Lapsus
+    </h1>
             <p>API2 Domain Search System</p>
         </div>
         
         <nav class="sidebar-nav">
             <div class="nav-item">
-                <a href="#" class="nav-link active" onclick="switchPage('search')">
-                    <i data-lucide="search"></i>
-                    Domain Arama
+                <a href="/" id="dashboardLink" class="nav-link " onclick="switchPage('dashboard')">
+                    <i data-lucide="layout-dashboard"></i>
+                    Kontrol Paneli
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="switchPage('analytics')">
-                    <i data-lucide="bar-chart-3"></i>
-                    Analitik
+                <a href="/search" id="searchLink" class="nav-link" onclick="switchPage('search')">
+                    <i data-lucide="radar"></i>
+                    Digital Footprint
+                </a>
+            </div>
+             <div class="nav-item">
+                <a href="/helix-d" id="searchLink" class="nav-link active" onclick="switchPage('search')">
+                    <i data-lucide="shield-off"></i>
+                    Domain Information Leak
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="switchPage('history')">
-                    <i data-lucide="history"></i>
-                    Arama Geçmişi
+                <a href="/leak-logs" class="nav-link" onclick="switchPage('leak-logs')">
+                    <i data-lucide="shield-alert"></i>
+                    Leak Logs Search
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="switchPage('reports')">
-                    <i data-lucide="file-text"></i>
-                    Raporlar
+                <a href="#" class="nav-link" onclick="toggleSubmenu(event, 'cve-submenu')">
+                    <i data-lucide="alert-triangle"></i>
+                    CVE Alert
+                </a>
+                <div id="cve-submenu" style="display: none; padding-left: 2.5rem;">
+                    <a href="#" class="nav-link" onclick="switchPage('cve-search')">CVE Search</a>
+                    <a href="#" class="nav-link" onclick="switchPage('cve-new')">CVE New</a>
+                    <a href="#" class="nav-link" onclick="switchPage('cve-summary')">CVE Summary</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="toggleSubmenu(event, 'ip-submenu')">
+                    <i data-lucide="network"></i>
+                    IP Search
+                </a>
+                <div id="ip-submenu" style="display: none; padding-left: 2.5rem;">
+                    <a href="#" class="nav-link" onclick="switchPage('ip-search')">IP Search</a>
+                    <a href="#" class="nav-link" onclick="switchPage('blacklist-ip')">Black List IP</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="toggleSubmenu(event, 'pentest-submenu')">
+                    <i data-lucide="bug"></i>
+                    Web Pentest
+                </a>
+                <div id="pentest-submenu" style="display: none; padding-left: 2.5rem;">
+                    <a href="#" class="nav-link" onclick="switchPage('web-pentest')">Web Pentest</a>
+                    <a href="#" class="nav-link" onclick="switchPage('wordpress-pentest')">WordPress Pentest</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="switchPage('domain-search')">
+                    <i data-lucide="globe"></i>
+                    Domain Search
                 </a>
             </div>
             <div class="nav-item">

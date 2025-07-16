@@ -25,14 +25,14 @@ class Config:
     API_CONFIG = {
         'base_url': os.getenv('API_BASE_URL', 'http://192.168.70.71:5000'),
         'api_key': os.getenv('API_KEY', 'demo_key_123'),
-        'timeout': int(os.getenv('API_TIMEOUT', 300)),
+        'timeout': int(os.getenv('API_TIMEOUT', 800)),
         'max_retries': int(os.getenv('API_MAX_RETRIES', 3))
     }
     
     API2_CONFIG = {
     'base_url': os.getenv('API_BASE_URL', 'https://api2.tahaeryetisozen.com.tr'),  # .com eklendi
     'api_key': os.getenv('API_KEY', 'mysecretkey123'),
-    'timeout': int(os.getenv('API_TIMEOUT', 30)),
+    'timeout': int(os.getenv('API_TIMEOUT', 500)),
     'max_retries': int(os.getenv('API_MAX_RETRIES', 3))
     }
     # Flask çalıştırma ayarları
